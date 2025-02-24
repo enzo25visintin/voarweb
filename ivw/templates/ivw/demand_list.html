@@ -1,0 +1,41 @@
+{% extends 'ivw/base.html' %}
+
+{% block title %}Demands List{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Lista de Demands</h2>
+    <form method="get" action=".">
+        <input type="text" name="q" placeholder="Buscar...">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+    <a href="{% url 'demand_create' %}" class="btn btn-primary mb-2">Nova Demand</a>
+    <table class="table table-bordered">
+        <thead class="thead-light">
+            <tr>
+                <th>ID</th>
+                <th>Data de Inserção</th>
+                <th>Título</th>
+                <th>Descrição</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for demand in demands %}
+            <tr>
+                <td>{{ demand.demand_id }}</td>
+                <td>{{ demand.insertion_date }}</td>
+                <td>{{ demand.title }}</td>
+                <td>{{ demand.description }}</td>
+                <td>{{ demand.status }}</td>
+                <td>
+                    <a href="{% url 'demand_update' demand.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'demand_analysis' demand.pk %}" class="btn btn-info btn-sm">Analisar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

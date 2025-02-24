@@ -1,0 +1,16 @@
+{% extends 'ivw/base.html' %}
+
+{% block title %}Materiality Issue Form{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{% if form.instance.pk %}Edit Materiality Issue{% else %}New Materiality Issue{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+{% endblock %}

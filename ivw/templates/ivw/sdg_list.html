@@ -1,0 +1,36 @@
+{% extends 'ivw/base.html' %}
+
+{% block title %}SDGs List{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>SDGs List</h2>
+    <form method="get" action=".">
+        <input type="text" name="q" placeholder="Buscar...">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    
+    <a href="{% url 'sdg_create' %}" class="btn btn-primary mb-2">New SDG</a>
+    <table class="table table-bordered">
+        <thead class="thead-light">
+            <tr>
+                <th>Number</th>
+                <th>Title</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sdg in sdgs %}
+            <tr>
+                <td>{{ sdg.sdg_number }}</td>
+                <td>{{ sdg.title }}</td>
+                <td>{{ sdg.description }}</td>
+                <td>
+                    <a href="{% url 'sdg_update' sdg.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

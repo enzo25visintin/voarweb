@@ -1,0 +1,40 @@
+{% extends 'ivw/base.html' %}
+
+{% block title %}Análise da Demanda II{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Análise da Demanda II</h2>
+    <p><strong>ID da Demanda:</strong> {{ demand.demand_id }}</p>
+    <p><strong>Título:</strong> {{ demand.title }}</p>
+    <p><strong>Descrição:</strong> {{ demand.description }}</p>
+    <p><strong>Stakeholders:</strong> 
+        <ul>
+        {% for stakeholder in demand.stakeholder_set.all %}
+            <li>{{ stakeholder.name }} ({{ stakeholder.company }})</li>
+        {% endfor %}
+        </ul>
+    </p>
+    <p><strong>Materiality Issues:</strong> 
+        <ul>
+        {% for materiality in demand.materialityissue_set.all %}
+            <li>{{ materiality.materiality_issue_group }}, {{ materiality.theme }}, {{ materiality.criterion }}</li>
+        {% endfor %}
+        </ul>
+    </p>
+    <p><strong>SDGs:</strong>
+        <ul>
+        {% for sdg in demand.sdg_set.all %}
+            <li>{{ sdg.sdg_number }}, {{ sdg.title }}</li>
+        {% endfor %}
+        </ul>
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar e retornar à Análise da Demanda</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'ivw/base.html' %}
+
+{% block title %} Demand Analysis i {{ Demand.title }} {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Análise da Demanda</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="stakeholders">Stakeholders</label>
+            <select name="stakeholders" id="stakeholders" multiple class="form-control">
+                {% for stakeholder in stakeholders %}
+                <option value="{{ stakeholder.stakeholder_id }}">{{ stakeholder.name }}, {{ stakeholder.company }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="materiality_issues">Materiality Issues</label>
+            <select name="materiality_issues" id="materiality_issues" multiple class="form-control">
+                {% for materiality in materiality_issues %}
+                <option value="{{ materiality.materiality_issue_id }}">{{ materiality.materiality_issue_group }}, {{ materiality.theme }}, {{ materiality.criterion }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="sdgs">SDGs</label>
+            <select name="sdgs" id="sdgs" multiple class="form-control">
+                {% for sdg in sdgs %}
+                <option value="{{ sdg.sdg_number }}">{{ sdg.sdg_number }}, {{ sdg.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Avançar para a próxima etapa</button>
+    </form>
+</div>
+{% endblock %}

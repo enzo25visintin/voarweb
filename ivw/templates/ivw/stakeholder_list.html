@@ -1,0 +1,40 @@
+{% extends 'ivw/base.html' %}
+
+{% block title %}Stakeholders List{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Lista de Stakeholders</h2>
+    <form method="get" action=".">
+        <input type="text" name="q" placeholder="Buscar...">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    
+    <a href="{% url 'stakeholder_create' %}" class="btn btn-primary mb-2">Novo Stakeholder</a>
+    <table class="table table-bordered">
+        <thead class="thead-light">
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Empresa</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stakeholder in stakeholders %}
+            <tr>
+                <td>{{ stakeholder.stakeholder_id }}</td>
+                <td>{{ stakeholder.name }}</td>
+                <td>{{ stakeholder.email }}</td>
+                <td>{{ stakeholder.telephone_number }}</td>
+                <td>{{ stakeholder.company }}</td>
+                <td>
+                    <a href="{% url 'stakeholder_update' stakeholder.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
