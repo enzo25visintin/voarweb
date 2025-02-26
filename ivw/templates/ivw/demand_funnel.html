@@ -1,0 +1,88 @@
+{% extends 'ivw/base.html' %}
+
+{% block title %}Demand Funnel{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Demand Funnel</h2>
+    <form method="get" action=".">
+        <input type="text" name="q" placeholder="Buscar...">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    <br>
+    <form method="post" action="{% url 'conclude_funnel' %}">
+        {% csrf_token %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Impact Scale</th>
+                    <th>Effort Scale</th>
+                    <th>Beneficiaries Scale</th>
+                    <th>Significancy</th>
+                    <th>Beneficiaries</th>
+                    <th>Status</th>
+                    <th>Detail</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for demand in demands %}
+                    <tr>
+                        <td>{{ demand.demand_id }}</td>
+                        <td>{{ demand.title }}</td>
+                        <td>{{ demand.potential_impact_scale }}</td>
+                        <td>{{ demand.potential_effort_scale }}</td>
+                        <td>{{ demand.potential_beneficiaries_scale }}</td>
+                        <td>{{ demand.significancy }}</td>
+                        <td>{{ demand.potential_beneficiaries }}</td>
+                        <td>
+                            <select id="status_{{ demand.demand_id }}" name="status_{{ demand.demand_id }}" class="form-control" onchange="updateStatus({{ demand.demand_id }})">
+                                <option value="Aguardando Priorização" {% if demand.status == 'Aguardando Priorização' %} selected {% endif %}>Aguardando Priorização</option>
+                                <option value="Aprovada" {% if demand.status == 'Aprovada' %} selected {% endif %}>Aprovada</option>
+                                <option value="Cancelada" {% if demand.status == 'Cancelada' %} selected {% endif %}>Cancelada</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button formaction="{% url 'demand_detail' demand.pk %}" class="btn btn-link" type="submit" name="detail" value="{{ demand.pk }}">Detail</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-danger mt-3">Conclude</button>
+    </form>
+</div>
+
+<script>
+function updateStatus(demandId) {
+    var selectBox = document.getElementById('status_' + demandId);
+    var newStatus = selectBox.options[selectBox.selectedIndex].value;
+
+    console.log('Demand ID:', demandId);
+    console.log('New Status:', newStatus);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '{% url "update_status" %}', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            var response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                console.log('Status updated successfully');
+            } else {
+                console.error('Failed to update status:', response.error);
+            }
+        } else if (xhr.readyState == 4) {
+            console.error('AJAX request failed');
+        }
+    };
+
+    var data = 'demand_id=' + encodeURIComponent(demandId) + '&new_status=' + encodeURIComponent(newStatus);
+    console.log('Sending Data:', data);
+    xhr.send(data);
+}
+</script>
+{% endblock %}

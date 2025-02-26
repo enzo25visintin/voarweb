@@ -4,37 +4,94 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Análise da Demanda II</h2>
-    <p><strong>ID da Demanda:</strong> {{ demand.demand_id }}</p>
-    <p><strong>Título:</strong> {{ demand.title }}</p>
-    <p><strong>Descrição:</strong> {{ demand.description }}</p>
-    <p><strong>Stakeholders:</strong> 
-        <ul>
-        {% for stakeholder in demand.stakeholder_set.all %}
-            <li>{{ stakeholder.name }} ({{ stakeholder.company }})</li>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}">
+                {{ message }}
+            </div>
         {% endfor %}
-        </ul>
-    </p>
-    <p><strong>Materiality Issues:</strong> 
-        <ul>
-        {% for materiality in demand.materialityissue_set.all %}
-            <li>{{ materiality.materiality_issue_group }}, {{ materiality.theme }}, {{ materiality.criterion }}</li>
-        {% endfor %}
-        </ul>
-    </p>
-    <p><strong>SDGs:</strong>
-        <ul>
-        {% for sdg in demand.sdg_set.all %}
-            <li>{{ sdg.sdg_number }}, {{ sdg.title }}</li>
-        {% endfor %}
-        </ul>
-    </p>
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            {{ form.as_p }}
+    {% endif %}
+    <div class="row">
+        <!-- Coluna da esquerda: Informações já cadastradas -->
+        <div class="col-md-6">
+            <h2>Informações da Demanda</h2>
+            <p><strong>ID da Demanda:</strong> {{ demand.demand_id }}</p>
+            <p><strong>Título:</strong> {{ demand.title }}</p>
+            <p><strong>Status da Demanda:</strong> {{ demand.status }}</p>
+            <p><strong>Descrição:</strong> {{ demand.description }}</p>
+            <p><strong>Stakeholders:</strong>
+                <ul>
+                {% for stakeholder in stakeholders %}
+                    <li>{{ stakeholder.name }} ({{ stakeholder.company }})</li>
+                {% endfor %}
+                </ul>
+            </p>
+            <p><strong>Materiality Issues:</strong>
+                <ul>
+                {% for materiality in materiality_issues %}
+                    <li>{{ materiality.materiality_issue_group }}, {{ materiality.theme }}, {{ materiality.criterion }}</li>
+                {% endfor %}
+                </ul>
+            </p>
+            <p><strong>SDGs:</strong>
+                <ul>
+                {% for sdg in sdgs %}
+                    <li>{{ sdg.sdg_number }}, {{ sdg.title }}</li>
+                {% endfor %}
+                </ul>
+            </p>
         </div>
-        <button type="submit" class="btn btn-primary">Salvar e retornar à Análise da Demanda</button>
-    </form>
+
+        <!-- Coluna da direita: Formulário para novas informações -->
+        <div class="col-md-6">
+            <h2>Preencher Informações da Demanda</h2>
+            <form method="post">
+                {% csrf_token %}
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <ul>
+                        {% for field, errors in form.errors.items %}
+                            <li>{{ field }}: {{ errors }}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                    
+
+                <div class="form-group mb-3">
+                    <label for="potential_impact_scale">Potential impact scale:</label><br>
+                    <input type="radio" name="potential_impact_scale" value="1" {% if demand.potential_impact_scale == 1 %} checked{% endif %}> 1
+                    <input type="radio" name="potential_impact_scale" value="2" {% if demand.potential_impact_scale == 2 %} checked{% endif %}> 2
+                    <input type="radio" name="potential_impact_scale" value="3" {% if demand.potential_impact_scale == 3 %} checked{% endif %}> 3
+                    <input type="radio" name="potential_impact_scale" value="4" {% if demand.potential_impact_scale == 4 %} checked{% endif %}> 4
+                    <input type="radio" name="potential_impact_scale" value="5" {% if demand.potential_impact_scale == 5 %} checked{% endif %}> 5
+                </div>
+                <div class="form-group mb-3">
+                    <label for="potential_effort_scale">Potential effort scale:</label><br>
+                    <input type="radio" name="potential_effort_scale" value="1" {% if demand.potential_effort_scale == 1 %} checked{% endif %}> 1
+                    <input type="radio" name="potential_effort_scale" value="2" {% if demand.potential_effort_scale == 2 %} checked{% endif %}> 2
+                    <input type="radio" name="potential_effort_scale" value="3" {% if demand.potential_effort_scale == 3 %} checked{% endif %}> 3
+                    <input type="radio" name="potential_effort_scale" value="4" {% if demand.potential_effort_scale == 4 %} checked{% endif %}> 4
+                    <input type="radio" name="potential_effort_scale" value="5" {% if demand.potential_effort_scale == 5 %} checked{% endif %}> 5
+                </div>
+                <div class="form-group mb-3">
+                    <label for="potential_beneficiaries_scale">Potential beneficiaries scale:</label><br>
+                    <input type="radio" name="potential_beneficiaries_scale" value="1" {% if demand.potential_beneficiaries_scale == 1 %} checked{% endif %}> 1
+                    <input type="radio" name="potential_beneficiaries_scale" value="2" {% if demand.potential_beneficiaries_scale == 2 %} checked{% endif %}> 2
+                    <input type="radio" name="potential_beneficiaries_scale" value="3" {% if demand.potential_beneficiaries_scale == 3 %} checked{% endif %}> 3
+                    <input type="radio" name="potential_beneficiaries_scale" value="4" {% if demand.potential_beneficiaries_scale == 4 %} checked{% endif %}> 4
+                    <input type="radio" name="potential_beneficiaries_scale" value="5" {% if demand.potential_beneficiaries_scale == 5 %} checked{% endif %}> 5
+                </div>
+                <div class="form-group mb-3">
+                    <label for="potential_beneficiaries">Potential beneficiaries:</label>
+                    <input type="number" name="potential_beneficiaries" class="form-control" value="{{ demand.potential_beneficiaries }}">
+                </div>
+                <button type="submit" class="btn btn-primary mb-3">Salvar e retornar à Análise da Demanda</button>
+            </form>
+        </div>
+    </div>
 </div>
+
+
+    
 {% endblock %}

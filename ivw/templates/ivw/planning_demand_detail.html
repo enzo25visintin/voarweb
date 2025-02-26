@@ -1,0 +1,30 @@
+{% extends 'ivw/base.html' %}
+
+{% block title %}Demand Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Details for Demand: {{ demand.title }}</h2>
+    <p><strong>ID:</strong> {{ demand.demand_id }}</p>
+    <p><strong>Description:</strong> {{ demand.description }}</p>
+    <h3>Stakeholders</h3>
+    <ul>
+        {% for stakeholder in stakeholders %}
+            <li>{{ stakeholder.name }} ({{ stakeholder.company }})</li>
+        {% endfor %}
+    </ul>
+    <h3>Materiality Issues</h3>
+    <ul>
+        {% for materiality in materiality_issues %}
+            <li>{{ materiality.materiality_issue_group }}, {{ materiality.theme }}, {{ materiality.criterion }}</li>
+        {% endfor %}
+    </ul>
+    <h3>SDGs</h3>
+    <ul>
+        {% for sdg in sdgs %}
+            <li>{{ sdg.sdg_number }}: {{ sdg.title }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'planning_list' %}" class="btn btn-secondary">Back</a>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'ivw/base.html' %}
+
+{% block title %}Demand Detail{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Demand Detail</h2>
+    <p><strong>ID:</strong> {{ demand.demand_id }}</p>
+    <p><strong>Title:</strong> {{ demand.title }}</p>
+    <p><strong>Status:</strong> {{ demand.status }}</p>
+    <p><strong>Description:</strong> {{ demand.description }}</p>
+    <p><strong>Impact Scale:</strong> {{ demand.potential_impact_scale }}</p>
+    <p><strong>Effort Scale:</strong> {{ demand.potential_effort_scale }}</p>
+    <p><strong>Beneficiaries Scale:</strong> {{ demand.potential_beneficiaries_scale }}</p>
+    <p><strong>Beneficiaries:</strong> {{ demand.potential_beneficiaries }}</p>
+    <a href="{% url 'demand_funnel' %}" class="btn btn-secondary">Back to Funnel</a>
+</div>
+{% endblock %}

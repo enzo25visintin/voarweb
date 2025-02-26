@@ -1,0 +1,42 @@
+{% extends 'ivw/base.html' %}
+
+{% block title %}Action Plans{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Action Plans for {{ demand.title }}</h2>
+    <form method="get" action=".">
+        <input type="text" name="q" placeholder="Buscar...">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    <br>
+    <a href="{% url 'action_plan_create' demand.demand_id %}" class="btn btn-primary mb-3">Create Action Plan</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Responsible</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Estimated Cost (R$)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for action_plan in action_plans %}
+                <tr>
+                    <td>{{ action_plan.title }}</td>
+                    <td>{{ action_plan.responsible }}</td>
+                    <td>{{ action_plan.start_date }}</td>
+                    <td>{{ action_plan.end_date }}</td>
+                    <td>{{ action_plan.estimated_cost }}</td>
+                    <td>
+                        <a href="{% url 'action_plan_update' demand.demand_id action_plan.id %}" class="btn btn-secondary">Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'finalize_planning' demand.demand_id %}" class="btn btn-success mt-3">Conclude</a>
+</div>
+{% endblock %}

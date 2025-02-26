@@ -1,0 +1,15 @@
+{% extends 'ivw/base.html' %}
+
+{% block title %}Conclude Funnel{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Conclude Funnel</h2>
+    <form method="post">
+        {% csrf_token %}
+        <p>Are you sure you want to record the status changes?</p>
+        <button type="submit" class="btn btn-primary">Yes, Save Changes</button>
+        <a href="{% url 'demand_funnel' %}" class="btn btn-secondary">No, Return to Funnel</a>
+    </form>
+</div>
+{% endblock %}

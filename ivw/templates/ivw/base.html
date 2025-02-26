@@ -14,6 +14,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
+            
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'about' %}">About</a>
@@ -27,10 +28,35 @@
                         <a class="dropdown-item" href="{% url 'sdg_list' %}">SDGs</a>
                         <a class="dropdown-item" href="{% url 'materiality_issue_list' %}">Materialidades</a>
                         <a class="dropdown-item" href="{% url 'stakeholder_list' %}">Stakeholder</a>
-                        <a class="dropdown-item" href="{% url 'demand_list' %}">Demands</a>
+                        <a class="dropdown-item" href="{% url 'program_list' %}">Program</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="cadastrosDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Demand Management
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="cadastrosDropdown">
+                        <a class="dropdown-item" href="{% url 'demand_list' %}">Demands List</a>
+                        <a class="dropdown-item" href="{% url 'demand_funnel' %}">Demand Authorization</a>
+                        <a class="dropdown-item" href="{% url 'planning_list' %}">Programs Management</a>
+            
                     </div>
                 </li>
             </ul>
+
+            <!-- User Authentication Links -->
+            <ul class="navbar-nav ml-auto">
+                {% if request.session.user_id %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                {% endif %}
+            </ul>
+            
         </div>
     </nav>
     <div class="container">

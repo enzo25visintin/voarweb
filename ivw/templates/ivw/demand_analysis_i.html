@@ -7,19 +7,27 @@
     <h2>Análise da Demanda</h2>
     <form method="post">
         {% csrf_token %}
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="stakeholders">Stakeholders</label>
             <select name="stakeholders" id="stakeholders" multiple class="form-control">
                 {% for stakeholder in stakeholders %}
-                <option value="{{ stakeholder.stakeholder_id }}">{{ stakeholder.name }}, {{ stakeholder.company }}</option>
+                <option value="{{ stakeholder.stakeholder_id }}"
+                {% if stakeholder in form.initial.stakeholders %}
+                selected
+                {% endif %}
+                >{{ stakeholder.name }}, {{ stakeholder.company }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="materiality_issues">Materiality Issues</label>
             <select name="materiality_issues" id="materiality_issues" multiple class="form-control">
                 {% for materiality in materiality_issues %}
-                <option value="{{ materiality.materiality_issue_id }}">{{ materiality.materiality_issue_group }}, {{ materiality.theme }}, {{ materiality.criterion }}</option>
+                <option value="{{ materiality.materiality_issue_id }}"
+                {% if materiality in form.initial.materiality_issues %}
+                selected
+                {% endif %}
+                >{{ materiality.materiality_issue_group }}, {{ materiality.theme }}, {{ materiality.criterion }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -27,7 +35,11 @@
             <label for="sdgs">SDGs</label>
             <select name="sdgs" id="sdgs" multiple class="form-control">
                 {% for sdg in sdgs %}
-                <option value="{{ sdg.sdg_number }}">{{ sdg.sdg_number }}, {{ sdg.title }}</option>
+                <option value="{{ sdg.sdg_number }}"
+                {% if sdg in form.initial.sdgs %}
+                selected
+                {% endif %}
+                >{{ sdg.sdg_number }}, {{ sdg.title }}</option>
                 {% endfor %}
             </select>
         </div>
