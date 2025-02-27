@@ -1,0 +1,103 @@
+{% extends 'ivw/base.html' %}
+
+{% block title %}Cockpit{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4">Cockpit</h1>
+
+    <!-- First Row: Status Chart + Program Budget Table -->
+    <div class="row mt-4">
+        <!-- Status Chart -->
+        <div class="col-md-6">
+            <h2 class="mb-3">Demand Status Distribution</h2>  <!-- Added space -->
+            <canvas id="statusChart" class="p-2"></canvas>
+        </div>
+
+        <!-- Program Budget Table -->
+        <div class="col-md-6">
+            <h2 class="mb-3">Programas e Valores Orçados</h2>
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Programa</th>
+                        <th>Valores Orçados (Aguardando Planejamento)</th>
+                        <th>Valores Orçados (Em Execução)</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for program in program_data %}
+                        <tr>
+                            <td>{{ program.title }}</td>
+                            <td>{{ program.planning_budget }}</td>
+                            <td>{{ program.execution_budget }}</td>
+                            <td>{{ program.total_budget }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Total</th>
+                        <th>{{ total_planning_budget }}</th>
+                        <th>{{ total_execution_budget }}</th>
+                        <th>{{ total_budget }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- Second Row: Three Pie Charts Side by Side -->
+    <div class="row mt-5 text-center">  <!-- Increased spacing between rows -->
+        <div class="col-md-4">
+            <h2 class="mb-3">Stakeholder</h2>
+            <canvas id="stakeholderChart" class="p-3"></canvas>
+        </div>
+        <div class="col-md-4">
+            <h2 class="mb-3">Materiality</h2>
+            <canvas id="materialityChart" class="p-3"></canvas>
+        </div>
+        <div class="col-md-4">
+            <h2 class="mb-3">SDGs</h2>
+            <canvas id="sdgChart" class="p-3"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Converte dados para JSON
+    const statusLabels = JSON.parse('{{ status_labels|escapejs }}');
+    const statusData = JSON.parse('{{ status_data|escapejs }}');
+    const stakeholderLabels = JSON.parse('{{ stakeholder_labels|escapejs }}');
+    const stakeholderData = JSON.parse('{{ stakeholder_data|escapejs }}');
+    const materialityLabels = JSON.parse('{{ materiality_labels|escapejs }}');
+    const materialityData = JSON.parse('{{ materiality_data|escapejs }}');
+    const sdgLabels = JSON.parse('{{ sdg_labels|escapejs }}');
+    const sdgData = JSON.parse('{{ sdg_data|escapejs }}');
+
+    new Chart(document.getElementById('statusChart').getContext('2d'), {
+        type: 'bar',
+        data: { labels: statusLabels, datasets: [{ label: 'Status', data: statusData }] }
+    });
+
+    new Chart(document.getElementById('stakeholderChart').getContext('2d'), {
+        type: 'pie',
+        data: { labels: stakeholderLabels, datasets: [{ data: stakeholderData }] }
+    });
+
+    new Chart(document.getElementById('materialityChart').getContext('2d'), {
+        type: 'pie',
+        data: { labels: materialityLabels, datasets: [{ data: materialityData }] }
+    });
+
+    new Chart(document.getElementById('sdgChart').getContext('2d'), {
+        type: 'pie',
+        data: { labels: sdgLabels, datasets: [{ data: sdgData }] }
+    });
+</script>
+
+{% endblock %}

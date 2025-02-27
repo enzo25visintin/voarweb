@@ -27,6 +27,14 @@ class User(models.Model):
         """Checks if the given password matches the stored hashed password."""
         return check_password(raw_password, self.password)
 
+class Program(models.Model):
+    program_id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.title
+
 
 class Demand(models.Model):
     demand_id = models.AutoField(primary_key=True)
@@ -41,8 +49,18 @@ class Demand(models.Model):
     potential_beneficiaries_scale = models.PositiveSmallIntegerField(null=True, blank=True)
     status = models.CharField(max_length=50, default="Aguardando Análise")
 
+    program = models.ForeignKey(Program, on_delete=models.SET_NULL, null=True, blank=True)  
+
     def __str__(self):
         return self.title
+
+
+class TemporaryDemandProgram(models.Model):
+    demand = models.OneToOneField(Demand, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.demand.title} - {self.program.title if self.program else 'None'}"
 
 
 class Stakeholder(models.Model):
@@ -98,13 +116,6 @@ class SDG_x_Demands(models.Model):
     sdg = models.ForeignKey(SDG, on_delete=models.CASCADE)
     demand = models.ForeignKey(Demand, on_delete=models.CASCADE)
 
-class Program(models.Model):
-    program_id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-
-    def __str__(self):
-        return self.title
 
 class ActionPlan(models.Model):
     demand = models.ForeignKey(Demand, on_delete=models.CASCADE, related_name='action_plans')

@@ -7,7 +7,7 @@ from .models import *
 from .forms import *
 from datetime import date
 from django.contrib.auth import login, logout
-
+import json
 
 # Create your views here.
 
@@ -333,7 +333,7 @@ def demand_analysis_ii(request, pk):
         form = DemandAnalysisForm(request.POST, instance=demand)
         if form.is_valid():
             demand = form.save(commit=False)  # Capture os dados do formulário sem salvar no banco de dados ainda
-            demand.status = 'Aguardando Priorização'  # Atualize o campo status
+            demand.status = 'Aprovada'  # Atualize o campo status
             demand.save()  # Salve os dados no banco de dados
 
             #form.save()
@@ -402,6 +402,8 @@ def demand_funnel(request):
     demands = Demand.objects.filter(status='Aguardando Priorização').annotate(
         significancy=(F('potential_impact_scale') + F('potential_effort_scale') + F('potential_beneficiaries_scale')) / 3
     ).order_by('-significancy')
+
+    
     query = request.GET.get('q')
     if query:
         demands = Demand.objects.filter(
@@ -412,7 +414,9 @@ def demand_funnel(request):
             models.Q(potential_beneficiaries__icontains=query) |
             models.Q(potential_beneficiaries_scale__icontains=query) |
             models.Q(status__icontains=query) 
-        )
+        ).annotate(
+        significancy=(F('potential_impact_scale') + F('potential_effort_scale') + F('potential_beneficiaries_scale')) / 3
+        ).order_by('-significancy')
 
     # Copiar o status de cada demanda para a tabela temporária
     for demand in demands:
@@ -514,19 +518,33 @@ def update_status(request):
 
 #Planning of demands
 def planning_list(request):
-    #This page requires authentication
     if 'user_id' not in request.session:
-        return redirect('login')  # Redirect to login page if not authenticated
-    
-    demands = Demand.objects.filter(status='Aprovada')
+        return redirect('login')
+
+    # Only show demands that are "Aprovada" and do NOT have a program assigned yet
+    demands = Demand.objects.filter(status='Aprovada', program__isnull=True) 
+    programs = Program.objects.all()
+
     query = request.GET.get('q')
     if query:
-        demands = Demand.objects.filter(
+        demands = demands.filter(
             models.Q(demand_id__icontains=query) |
             models.Q(title__icontains=query) |
             models.Q(status__icontains=query) 
         )
-    return render(request, 'ivw/planning_list.html', {'demands': demands})
+
+    # Create or update temporary program entries for each demand
+    demand_list = []
+    for demand in demands:
+        temp_prog, created = TemporaryDemandProgram.objects.get_or_create(demand=demand)
+        if temp_prog.program is None:
+            temp_prog.program = demand.program  # Initialize with actual demand's program (if exists)
+            temp_prog.save()
+        demand_list.append({'demand': demand, 'temp_program': temp_prog.program})
+
+    return render(request, 'ivw/planning_list.html', {'demands': demand_list, 'programs': programs})
+
+
 
 
 def planning_demand_detail(request, demand_id):
@@ -585,11 +603,6 @@ def action_plan_update(request, demand_id, pk):
 def finalize_planning(request, demand_id):
     demand = get_object_or_404(Demand, pk=demand_id)
     action_plans = demand.action_plans.all()
-    #for action_plan in action_plans:
-    #    action_plan.status = 'Em Execução'
-    #    action_plan.save()
-    #demand.status = 'Em Execução'
-    #demand.save()
     return redirect('planning_list')
 
 
@@ -598,15 +611,146 @@ def complete_prioritization(request):
     if 'user_id' not in request.session:
         return redirect('login')  # Redirect to login page if not authenticated
 
-    # Atualizar o status de todas as demandas aprovadas e seus planos de ação para "Em Execução"
-    approved_demands = Demand.objects.filter(status='Aprovada')
-    for demand in approved_demands:
-        demand.status = 'Em Execução'
-        demand.save()
-        action_plans = demand.action_plans.all()
-        for action_plan in action_plans:
-            action_plan.status = 'Em Execução'
-            action_plan.save()
-    return redirect('home')
+    return render(request, 'ivw/conclude_planning.html')
+
+def save_changes_planning(request):
+    if request.method == 'POST':
+        if 'confirm' in request.POST:  # User confirms saving changes
+            temp_demand_programs = TemporaryDemandProgram.objects.all()  # Get all temp assignments
+
+            for temp_prog in temp_demand_programs:
+                demand = temp_prog.demand
+
+                # Apply program change even if the program is None (No Program selected)
+                demand.program = temp_prog.program  
+                
+                # Move only demands with a program to "Em Execução"
+                if demand.program:
+                    demand.status = 'Em Execução'  
+                
+                demand.save()
+
+                # Also update action plans if necessary
+                for action_plan in demand.action_plans.all():
+                    if demand.program:  # Only set "Em Execução" if program exists
+                        action_plan.status = 'Em Execução'
+                    action_plan.save()
+
+            # Delete all temporary records after processing
+            TemporaryDemandProgram.objects.all().delete()
+
+        elif 'cancel' in request.POST:  # If user cancels, do nothing and return
+            return redirect('planning_list')
+
+    return redirect('planning_list')
 
 
+
+
+
+def update_demand_program(request):
+    if request.method == 'POST':
+        demand_id = request.POST.get('demand_id')
+        program_id = request.POST.get('program_id')
+        demand = get_object_or_404(Demand, pk=demand_id)
+
+        temp_prog, created = TemporaryDemandProgram.objects.get_or_create(demand=demand)
+
+        if program_id:  # If a program was selected
+            temp_prog.program_id = program_id
+        else:  # If "No Program" was selected
+            temp_prog.program = None
+
+        temp_prog.save()
+
+        return JsonResponse({'success': True, 'demand_id': demand_id, 'program_id': program_id})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+#Dashboard views
+def cockpit(request):
+    # Dados para o gráfico de percentuais das demandas por status
+    statuses = Demand.objects.values_list('status', flat=True)
+    status_labels = list(set(statuses))
+    status_data = [Demand.objects.filter(status=status).count() for status in status_labels]
+
+    # Dados para as tabelas de programas e valores orçados
+    programs = Program.objects.all()
+    program_data = []
+    total_planning_budget = 0
+    total_execution_budget = 0
+    total_temp_budget = 0  # Budget for temporary (not-yet-saved) demands
+
+    for program in programs:
+        planning_budget = 0
+        execution_budget = 0
+        temp_budget = 0  # Budget for demands still in temporary state
+
+        # Fetch all demands linked to this program that are already saved in the database
+        approved_demands = Demand.objects.filter(program=program, status='Aguardando Planejamento')
+        executing_demands = Demand.objects.filter(program=program, status='Em Execução')
+
+        for demand in approved_demands:
+            for plan in demand.action_plans.all():
+                planning_budget += plan.estimated_cost  # Only confirmed demands go here
+
+        for demand in executing_demands:
+            for plan in demand.action_plans.all():
+                execution_budget += plan.estimated_cost  # Already executing demands go here
+
+        # Now, also fetch demands that were assigned a program **temporarily**
+        temp_demands = TemporaryDemandProgram.objects.filter(program=program)
+
+        for temp_demand in temp_demands:
+            # We only include temporary demands that are NOT yet in the confirmed demand list
+            if not Demand.objects.filter(pk=temp_demand.demand.pk, status__in=['Aguardando Planejamento', 'Em Execução']).exists():
+                for plan in temp_demand.demand.action_plans.all():
+                    temp_budget += plan.estimated_cost  # Add cost from temporary assignments
+
+        total_budget = planning_budget + execution_budget + temp_budget
+        total_planning_budget += planning_budget
+        total_execution_budget += execution_budget
+        total_temp_budget += temp_budget
+
+        program_data.append({
+            'title': program.title,
+            'planning_budget': planning_budget + temp_budget,  # Only adds temp if not duplicated
+            'execution_budget': execution_budget,
+            'total_budget': total_budget
+        })
+
+    # Dados para os gráficos de pizza por stakeholder, materiality issues e SDGs
+    stakeholders = Stakeholder.objects.all()
+    materiality_issues = Materiality_Issue.objects.all()
+    sdgs = SDG.objects.all()
+
+    stakeholder_labels = [stakeholder.name for stakeholder in stakeholders]
+    materiality_labels = [issue.criterion for issue in materiality_issues]
+    sdg_labels = [str(sdg.sdg_number) for sdg in sdgs]
+
+    stakeholder_data = [Demand.objects.filter(stakeholder_x_demands__stakeholder=stakeholder).count() for stakeholder in stakeholders]
+    materiality_data = [Demand.objects.filter(demands_x_materiality__materiality_issue=issue).count() for issue in materiality_issues]
+    sdg_data = [Demand.objects.filter(sdg_x_demands__sdg=sdgs).count() for sdgs in sdgs]
+
+    # Dados para a tabela de demandas por status
+    demands_by_status = Demand.objects.values('status').annotate(count=models.Count('status')).order_by('status')
+    total_demands = Demand.objects.count()
+
+    context = {
+        'status_labels': json.dumps(status_labels),
+        'status_data': json.dumps(status_data),
+        'program_data': program_data,
+        'total_planning_budget': total_planning_budget + total_temp_budget,  # Now includes temp demands
+        'total_execution_budget': total_execution_budget,
+        'total_budget': total_planning_budget + total_execution_budget + total_temp_budget,
+        'stakeholder_labels': json.dumps(stakeholder_labels),
+        'stakeholder_data': json.dumps(stakeholder_data),
+        'materiality_labels': json.dumps(materiality_labels),
+        'materiality_data': json.dumps(materiality_data),
+        'sdg_labels': json.dumps(sdg_labels),
+        'sdg_data': json.dumps(sdg_data),
+        'demands_by_status': {demand['status']: demand['count'] for demand in demands_by_status},
+        'total_demands': total_demands
+    }
+
+    return render(request, 'ivw/cockpit.html', context)

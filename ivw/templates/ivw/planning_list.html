@@ -6,8 +6,8 @@
 <div class="container mt-4">
     <h2>Approved Demands</h2>
     <form method="get" action=".">
-        <input type="text" name="q" placeholder="Buscar...">
-        <button type="submit" class="btn btn-primary">Buscar</button>
+        <input type="text" name="q" placeholder="Search...">
+        <button type="submit" class="btn btn-primary">Search</button>
     </form>
     <br>
     <table class="table">
@@ -16,23 +16,73 @@
                 <th>ID</th>
                 <th>Title</th>
                 <th>Status</th>
+                <th>Program</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            {% for demand in demands %}
+            {% for item in demands %}
+                {% with demand=item.demand temp_program=item.temp_program %}
                 <tr>
                     <td>{{ demand.demand_id }}</td>
                     <td>{{ demand.title }}</td>
                     <td>{{ demand.status }}</td>
                     <td>
-                        <a href="{% url 'planning_demand_detail' demand.demand_id %}" class="btn btn-link">Details</a>
+                        <select name="program_id" id="program_{{ demand.demand_id }}" class="form-control" onchange="updateProgram({{ demand.demand_id }})">
+                            <option value="" {% if not temp_program %} selected {% endif %}>No Program</option>
+                            {% for program in programs %}
+                                <option value="{{ program.program_id }}" {% if temp_program and temp_program.program_id == program.program_id %} selected {% endif %}>
+                                    {{ program.title }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </td>                    
+                    <td>
+                        {% if demand.demand_id %}
+                            <a href="{% url 'planning_demand_detail' demand.demand_id %}" class="btn btn-link">Details</a>
+                        {% else %}
+                            <span class="text-muted">No Details Available</span>
+                        {% endif %}
                         <a href="{% url 'action_plan_list' demand.demand_id %}" class="btn btn-primary">Planning</a>
                     </td>
                 </tr>
+                {% endwith %}
             {% endfor %}
         </tbody>
     </table>
-    <a href="{% url 'complete_prioritization' %}" class="btn btn-danger mt-3">Complete Prioritization</a>
+    <a href="{% url 'conclude_planning' %}" class="btn btn-danger mt-3">Complete Planning</a>
 </div>
+
+<script>
+function updateProgram(demandId) {
+    var selectBox = document.getElementById('program_' + demandId);
+    var programId = selectBox.value;
+
+    console.log('Demand ID:', demandId);
+    console.log('New Program:', programId);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '{% url "update_demand_program" %}', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            var response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                console.log('Program updated successfully');
+            } else {
+                console.error('Failed to update program:', response.error);
+            }
+        } else if (xhr.readyState == 4) {
+            console.error('AJAX request failed');
+        }
+    };
+
+    var data = 'demand_id=' + encodeURIComponent(demandId) + '&program_id=' + encodeURIComponent(programId);
+    console.log('Sending Data:', data);
+    xhr.send(data);
+}
+</script>
+
 {% endblock %}

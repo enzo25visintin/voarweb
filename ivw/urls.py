@@ -43,13 +43,16 @@ urlpatterns = [
     path('update_status/', views.update_status, name='update_status'),
 
     path('planning/', views.planning_list, name='planning_list'),
+    path('update_demand_program/', views.update_demand_program, name='update_demand_program'),
     path('planning/demand/<int:demand_id>/planning_detail/', views.planning_demand_detail, name='planning_demand_detail'),
     path('planning/demand/<int:demand_id>/action_plans/', views.action_plan_list, name='action_plan_list'),
     path('planning/demand/<int:demand_id>/action_plans/create/', views.action_plan_create, name='action_plan_create'),
     path('planning/demand/<int:demand_id>/action_plans/<int:pk>/update/', views.action_plan_update, name='action_plan_update'),
     path('planning/demand/<int:demand_id>/finalize_planning/', views.finalize_planning, name='finalize_planning'),
-    path('planning/complete_prioritization/', views.complete_prioritization, name='complete_prioritization'),
+    path('planning/conclude_planning/', views.complete_prioritization, name='conclude_planning'),
+    path('save_changes_planning/', views.save_changes_planning, name='save_changes_planning'),
 
+    path('cockpit/', views.cockpit, name='cockpit'),  # Nova view adicionada aqui
     
 
 ]
