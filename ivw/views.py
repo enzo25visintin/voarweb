@@ -71,7 +71,6 @@ def user_update(request, pk):
         form = UserForm(instance=user)
     return render(request, 'ivw/user_form.html', {'form': form})
 
-
 #Login and Logout Views
 def user_login(request):
     # Clear any previous messages before rendering the login page
@@ -104,14 +103,13 @@ def user_logout(request):
     messages.success(request, "You have been logged out.")
     return redirect("login")
 
-
 #SDGs
 def sdg_list(request):
     #This page requires authentication
     if 'user_id' not in request.session:
         return redirect('login')  # Redirect to login page if not authenticated 
 
-    sdgs = SDG.objects.all()
+    sdgs = SDG.objects.all().order_by('sdg_number')
     query = request.GET.get('q')
     if query:
         sdgs = SDG.objects.filter(
@@ -141,7 +139,6 @@ def sdg_update(request, pk):
     else:
         form = SDGForm(instance=sdg)
     return render(request, 'ivw/sdg_form.html', {'form': form})
-
 
 #Materiality
 def materiality_issue_list(request):
@@ -181,7 +178,6 @@ def materiality_issue_update(request, pk):
     else:
         form = MaterialityIssueForm(instance=issue)
     return render(request, 'ivw/materiality_issue_form.html', {'form': form})
-
 
 #Stakeholders
 def stakeholder_list(request):
@@ -274,7 +270,6 @@ def demand_analysis_i(request, pk):
     selected_materiality_issues = Materiality_Issue.objects.filter(demands_x_materiality__demand=demand)
     selected_sdgs = SDG.objects.filter(sdg_x_demands__demand=demand)
 
-
     if request.method == 'POST':
         form = DemandAnalysisForm(request.POST)
         if form.is_valid():
@@ -328,20 +323,19 @@ def demand_analysis_ii(request, pk):
     materiality_issues = Materiality_Issue.objects.filter(demands_x_materiality__demand=demand)
     sdgs = SDG.objects.filter(sdg_x_demands__demand=demand)
 
-
     if request.method == 'POST':
         form = DemandAnalysisForm(request.POST, instance=demand)
         if form.is_valid():
             demand = form.save(commit=False)  # Capture os dados do formulário sem salvar no banco de dados ainda
-            demand.status = 'Aprovada'  # Atualize o campo status
+            demand.status = 'Awaiting Prioritization'  # Atualize o campo status
             demand.save()  # Salve os dados no banco de dados
 
             #form.save()
             # Adicionar uma mensagem de sucesso
-            messages.success(request, 'Dados gravados com sucesso!')
+            messages.success(request, 'Data saved successfully')
             return redirect('demand_list')
         else:
-            messages.error(request, 'Erro ao gravar os dados. Verifique o formulário e tente novamente.')
+            messages.error(request, 'Error saving data. Please check the form and try again.')
             print(form.errors)
 
     else:
@@ -399,7 +393,7 @@ def demand_funnel(request):
         return redirect('login')  # Redirect to login page if not authenticated
 
     # Recuperar todas as demandas com status "Aguardando Priorização"
-    demands = Demand.objects.filter(status='Aguardando Priorização').annotate(
+    demands = Demand.objects.filter(status='Awaiting Prioritization').annotate(
         significancy=(F('potential_impact_scale') + F('potential_effort_scale') + F('potential_beneficiaries_scale')) / 3
     ).order_by('-significancy')
 
@@ -444,10 +438,9 @@ def demand_funnel(request):
         'demands': demand_list
     })
 
-
 def save_changes(request):
     if request.method == 'POST':
-        demands = Demand.objects.filter(status='Aguardando Priorização').annotate(
+        demands = Demand.objects.filter(status='Awaiting Prioritization').annotate(
             significancy=(F('potential_impact_scale') + F('potential_effort_scale') + F('potential_beneficiaries_scale')) / 3
         ).order_by('-significancy')
 
@@ -461,7 +454,6 @@ def save_changes(request):
             demand_id = request.POST['detail']
             return redirect('demand_detail', pk=demand_id)
         return redirect('demand_funnel')
-
 
 def demand_detail(request, pk):
     #This page requires authentication
@@ -522,7 +514,7 @@ def planning_list(request):
         return redirect('login')
 
     # Only show demands that are "Aprovada" and do NOT have a program assigned yet
-    demands = Demand.objects.filter(status='Aprovada', program__isnull=True) 
+    demands = Demand.objects.filter(status='Approved', program__isnull=True) 
     programs = Program.objects.all()
 
     query = request.GET.get('q')
@@ -546,7 +538,6 @@ def planning_list(request):
 
 
 
-
 def planning_demand_detail(request, demand_id):
     demand = get_object_or_404(Demand, pk=demand_id)
     stakeholders = Stakeholder.objects.filter(stakeholder_x_demands__demand_id=demand_id)
@@ -558,7 +549,6 @@ def planning_demand_detail(request, demand_id):
         'materiality_issues': materiality_issues,
         'sdgs': sdgs
     })
-
 
 def action_plan_list(request, demand_id):
     demand = get_object_or_404(Demand, pk=demand_id)
@@ -599,12 +589,10 @@ def action_plan_update(request, demand_id, pk):
         form = ActionPlanForm(instance=action_plan)
     return render(request, 'ivw/action_plan_form.html', {'form': form, 'demand': demand})
 
-
 def finalize_planning(request, demand_id):
     demand = get_object_or_404(Demand, pk=demand_id)
     action_plans = demand.action_plans.all()
     return redirect('planning_list')
-
 
 def complete_prioritization(request):
     #This page requires authentication
@@ -626,14 +614,14 @@ def save_changes_planning(request):
                 
                 # Move only demands with a program to "Em Execução"
                 if demand.program:
-                    demand.status = 'Em Execução'  
+                    demand.status = 'In Execution'  
                 
                 demand.save()
 
                 # Also update action plans if necessary
                 for action_plan in demand.action_plans.all():
                     if demand.program:  # Only set "Em Execução" if program exists
-                        action_plan.status = 'Em Execução'
+                        action_plan.status = 'In Execution'
                     action_plan.save()
 
             # Delete all temporary records after processing
@@ -643,7 +631,6 @@ def save_changes_planning(request):
             return redirect('planning_list')
 
     return redirect('planning_list')
-
 
 
 
@@ -687,8 +674,8 @@ def cockpit(request):
         temp_budget = 0  # Budget for demands still in temporary state
 
         # Fetch all demands linked to this program that are already saved in the database
-        approved_demands = Demand.objects.filter(program=program, status='Aguardando Planejamento')
-        executing_demands = Demand.objects.filter(program=program, status='Em Execução')
+        approved_demands = Demand.objects.filter(program=program, status='Awaiting Planning')
+        executing_demands = Demand.objects.filter(program=program, status='In Execution')
 
         for demand in approved_demands:
             for plan in demand.action_plans.all():
@@ -703,7 +690,7 @@ def cockpit(request):
 
         for temp_demand in temp_demands:
             # We only include temporary demands that are NOT yet in the confirmed demand list
-            if not Demand.objects.filter(pk=temp_demand.demand.pk, status__in=['Aguardando Planejamento', 'Em Execução']).exists():
+            if not Demand.objects.filter(pk=temp_demand.demand.pk, status__in=['Awaiting Planning', 'In Execution']).exists():
                 for plan in temp_demand.demand.action_plans.all():
                     temp_budget += plan.estimated_cost  # Add cost from temporary assignments
 

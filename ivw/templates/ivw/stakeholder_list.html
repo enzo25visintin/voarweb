@@ -4,21 +4,22 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Lista de Stakeholders</h2>
+    <h2>Stakeholders List</h2>
     <form method="get" action=".">
-        <input type="text" name="q" placeholder="Buscar...">
-        <button type="submit" class="btn btn-primary">Buscar</button>
+        <input type="text" name="q" placeholder="Search...">
+        <button type="submit" class="btn btn-primary">Search</button>
     </form>
     
-    <a href="{% url 'stakeholder_create' %}" class="btn btn-primary mb-2">Novo Stakeholder</a>
+    <a href="{% url 'stakeholder_create' %}" class="btn btn-primary mb-2">New Stakeholder</a>
     <table class="table table-bordered">
         <thead class="thead-light">
             <tr>
                 <th>ID</th>
-                <th>Nome</th>
+                <th>Name</th>
                 <th>Email</th>
-                <th>Telefone</th>
-                <th>Empresa</th>
+                <th>Phone</th>
+                <th>Company</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -30,7 +31,7 @@
                 <td>{{ stakeholder.telephone_number }}</td>
                 <td>{{ stakeholder.company }}</td>
                 <td>
-                    <a href="{% url 'stakeholder_update' stakeholder.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'stakeholder_update' stakeholder.pk %}" class="btn btn-warning btn-sm">Edit</a>
                 </td>
             </tr>
             {% endfor %}

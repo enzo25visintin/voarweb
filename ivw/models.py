@@ -3,7 +3,6 @@ from django.utils import timezone
 from django.contrib.auth.hashers import make_password, check_password
 
 
-
 # Create your models here.
 class User(models.Model):
     Active_choices = [('A', 'Active'), ('I','Inactive'),]
@@ -14,7 +13,7 @@ class User(models.Model):
     password = models.CharField(max_length=128)
     telephone_number = models.CharField(max_length=15)
     company = models.CharField(max_length=100)
-    active = models.CharField(max_length=1, choices=Active_choices, default='1')
+    active = models.CharField(max_length=1, choices=Active_choices, default='A')
 
     def __str__(self):
         return self.name
@@ -35,7 +34,6 @@ class Program(models.Model):
     def __str__(self):
         return self.title
 
-
 class Demand(models.Model):
     demand_id = models.AutoField(primary_key=True)
     insertion_date = models.DateTimeField(default=timezone.now)
@@ -47,13 +45,12 @@ class Demand(models.Model):
     potential_effort_scale = models.PositiveSmallIntegerField(null=True, blank=True)
     potential_beneficiaries = models.PositiveIntegerField(null=True, blank=True)
     potential_beneficiaries_scale = models.PositiveSmallIntegerField(null=True, blank=True)
-    status = models.CharField(max_length=50, default="Aguardando Análise")
+    status = models.CharField(max_length=50, default="Awaiting analysis")
 
     program = models.ForeignKey(Program, on_delete=models.SET_NULL, null=True, blank=True)  
 
     def __str__(self):
         return self.title
-
 
 class TemporaryDemandProgram(models.Model):
     demand = models.OneToOneField(Demand, on_delete=models.CASCADE)
@@ -61,7 +58,6 @@ class TemporaryDemandProgram(models.Model):
 
     def __str__(self):
         return f"{self.demand.title} - {self.program.title if self.program else 'None'}"
-
 
 class Stakeholder(models.Model):
     stakeholder_id = models.AutoField(primary_key=True)
@@ -81,7 +77,6 @@ class SDG(models.Model):
     def __str__(self):
         return f"{self.sdg_number} - {self.title}"
 
-
 class Materiality_Issue(models.Model):
     materiality_issue_id = models.AutoField(primary_key=True)
     materiality_issue_group = models.CharField(max_length=200)
@@ -92,13 +87,12 @@ class Materiality_Issue(models.Model):
     def __str__(self):
         return f"{self.materiality_issue_group} - {self.theme} - {self.criterion}"
 
-
 class TemporaryDemandStatus(models.Model):
     demand = models.OneToOneField('Demand', on_delete=models.CASCADE)
     status = models.CharField(max_length=30, choices=[
-        ('Aguardando Priorização', 'Aguardando Priorização'),
-        ('Aprovada', 'Aprovada'),
-        ('Cancelada', 'Cancelada')
+        ('Awaiting Prioritization', 'Awaiting Prioritization'),
+        ('Approved', 'Approved'),
+        ('Canceled', 'Canceled')
     ])
 
     def __str__(self):
@@ -116,7 +110,6 @@ class SDG_x_Demands(models.Model):
     sdg = models.ForeignKey(SDG, on_delete=models.CASCADE)
     demand = models.ForeignKey(Demand, on_delete=models.CASCADE)
 
-
 class ActionPlan(models.Model):
     demand = models.ForeignKey(Demand, on_delete=models.CASCADE, related_name='action_plans')
     title = models.CharField(max_length=200)
@@ -125,7 +118,7 @@ class ActionPlan(models.Model):
     end_date = models.DateField()
     scope_detail = models.TextField()
     estimated_cost = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=50, default='Pendente') 
+    status = models.CharField(max_length=50, default='Pendent') 
 
     def __str__(self):
         return self.title

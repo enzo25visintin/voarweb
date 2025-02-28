@@ -7,8 +7,8 @@
 <div class="container mt-4">
     <h2>Users list</h2>
     <form method="get" action=".">
-        <input type="text" name="q" placeholder="Buscar...">
-        <button type="submit" class="btn btn-primary">Buscar</button>
+        <input type="text" name="q" placeholder="Search...">
+        <button type="submit" class="btn btn-primary">Search</button>
     </form>
     
     <a href="{% url 'user_create' %}" class="btn btn-primary mb-2">New User</a>
@@ -18,7 +18,7 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Telephone Number</th>
+                <th>Phone</th>
                 <th>Company</th>
                 <th>Status</th>
             </tr>

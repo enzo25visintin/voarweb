@@ -1,13 +1,13 @@
 {% extends 'ivw/base.html' %}
 
-{% block title %}Listagem de Programas{% endblock %}
+{% block title %}Programs List{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
     <h2>Programs List</h2>
     <form method="get" action=".">
-        <input type="text" name="q" placeholder="Buscar...">
-        <button type="submit" class="btn btn-primary">Buscar</button>
+        <input type="text" name="q" placeholder="Search...">
+        <button type="submit" class="btn btn-primary">Search</button>
     </form>
     <a href="{% url 'program_create' %}" class="btn btn-primary mb-2">New Program</a>
     <table class="table table-bordered">

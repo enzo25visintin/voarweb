@@ -6,8 +6,8 @@
 <div class="container mt-4">
     <h2>Action Plans for {{ demand.title }}</h2>
     <form method="get" action=".">
-        <input type="text" name="q" placeholder="Buscar...">
-        <button type="submit" class="btn btn-primary">Buscar</button>
+        <input type="text" name="q" placeholder="Search...">
+        <button type="submit" class="btn btn-primary">Search</button>
     </form>
     <br>
     <a href="{% url 'action_plan_create' demand.demand_id %}" class="btn btn-primary mb-3">Create Action Plan</a>

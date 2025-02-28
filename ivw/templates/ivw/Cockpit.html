@@ -1,28 +1,28 @@
 {% extends 'ivw/base.html' %}
 
-{% block title %}Cockpit{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1 class="mt-4">Cockpit</h1>
+    <h1 class="mt-4">Dashboard</h1>
 
     <!-- First Row: Status Chart + Program Budget Table -->
     <div class="row mt-4">
         <!-- Status Chart -->
         <div class="col-md-6">
-            <h2 class="mb-3">Demand Status Distribution</h2>  <!-- Added space -->
+            <h2 class="mb-3">Demand Status Distribution</h2>
             <canvas id="statusChart" class="p-2"></canvas>
         </div>
 
         <!-- Program Budget Table -->
         <div class="col-md-6">
-            <h2 class="mb-3">Programas e Valores Orçados</h2>
+            <h2 class="mb-3">Programs and Budgeted Values</h2>
             <table class="table table-bordered">
                 <thead class="thead-dark">
                     <tr>
-                        <th>Programa</th>
-                        <th>Valores Orçados (Aguardando Planejamento)</th>
-                        <th>Valores Orçados (Em Execução)</th>
+                        <th>Program</th>
+                        <th>Budgeted Values (Awaiting Planning)</th>
+                        <th>Budgeted Values (In Execution)</th>
                         <th>Total</th>
                     </tr>
                 </thead>
@@ -48,28 +48,33 @@
         </div>
     </div>
 
-    <!-- Second Row: Three Pie Charts Side by Side -->
-    <div class="row mt-5 text-center">  <!-- Increased spacing between rows -->
-        <div class="col-md-4">
-            <h2 class="mb-3">Stakeholder</h2>
-            <canvas id="stakeholderChart" class="p-3"></canvas>
+
+
+    <!-- Demand Distribution per Category Title (Centered & Properly Positioned) -->
+    <div class="text-center mt-5">
+        <h2 class="mb-4">Demand Distribution per Category</h2>
+        <div class="row mt-5 justify-content-center text-center">
+            <div class="col-md-4 px-4">
+                <h3 class="mb-3">Stakeholders</h3>
+                <canvas id="stakeholderChart" class="p-3" style="width: 100%; max-width: 400px; max-height: 400px;"></canvas>
+            </div>
+            <div class="col-md-4 px-4">
+                <h3 class="mb-3">Materiality Issues</h3>
+                <canvas id="materialityChart" class="p-3" style="width: 100%; max-width: 400px; max-height: 400px;"></canvas>
+            </div>
+            <div class="col-md-4 px-4">
+                <h3 class="mb-3">SDGs</h3>
+                <canvas id="sdgChart" class="p-3" style="width: 100%; max-width: 400px; max-height: 400px;"></canvas>
+            </div>
         </div>
-        <div class="col-md-4">
-            <h2 class="mb-3">Materiality</h2>
-            <canvas id="materialityChart" class="p-3"></canvas>
-        </div>
-        <div class="col-md-4">
-            <h2 class="mb-3">SDGs</h2>
-            <canvas id="sdgChart" class="p-3"></canvas>
-        </div>
-    </div>
+    </div>   
 </div>
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    // Converte dados para JSON
+    // Convert data to JSON
     const statusLabels = JSON.parse('{{ status_labels|escapejs }}');
     const statusData = JSON.parse('{{ status_data|escapejs }}');
     const stakeholderLabels = JSON.parse('{{ stakeholder_labels|escapejs }}');

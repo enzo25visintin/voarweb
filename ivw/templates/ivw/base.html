@@ -10,7 +10,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{% url 'home' %}">Meu Projeto</a>
+        <a class="navbar-brand" href="{% url 'home' %}">Home</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -22,14 +22,14 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="cadastrosDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Cadastros
+                        Registrations
                     </a>
                     <div class="dropdown-menu" aria-labelledby="cadastrosDropdown">
-                        <a class="dropdown-item" href="{% url 'user_list' %}">Usuários</a>
+                        <a class="dropdown-item" href="{% url 'user_list' %}">Users</a>
                         <a class="dropdown-item" href="{% url 'sdg_list' %}">SDGs</a>
-                        <a class="dropdown-item" href="{% url 'materiality_issue_list' %}">Materialidades</a>
-                        <a class="dropdown-item" href="{% url 'stakeholder_list' %}">Stakeholder</a>
-                        <a class="dropdown-item" href="{% url 'program_list' %}">Program</a>
+                        <a class="dropdown-item" href="{% url 'materiality_issue_list' %}">Materialities</a>
+                        <a class="dropdown-item" href="{% url 'stakeholder_list' %}">Stakeholders</a>
+                        <a class="dropdown-item" href="{% url 'program_list' %}">Programs</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -38,12 +38,12 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="cadastrosDropdown">
                         <a class="dropdown-item" href="{% url 'demand_list' %}">Demands List</a>
-                        <a class="dropdown-item" href="{% url 'demand_funnel' %}">Demand Authorization</a>
+                        <a class="dropdown-item" href="{% url 'demand_funnel' %}">Demand Prioritization</a>
                         <a class="dropdown-item" href="{% url 'planning_list' %}">Programs Management</a>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'cockpit' %}">Dashboards</a>
+                    <a class="nav-link" href="{% url 'cockpit' %}">Dashboard</a>
                 </li>
             </ul>
 

@@ -1,10 +1,10 @@
 {% extends 'ivw/base.html' %}
 
-{% block title %}Formulário de Programa{% endblock %}
+{% block title %}Program Registration{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2>{% if form.instance.pk %}Editar Programa{% else %}Novo Programa{% endif %}</h2>
+    <h2>{% if form.instance.pk %}Edit Program{% else %}New Program{% endif %}</h2>
     <form method="post">
         {% csrf_token %}
         <div class="form-group">

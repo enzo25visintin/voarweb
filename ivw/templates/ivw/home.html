@@ -5,11 +5,20 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="jumbotron">
-        <h1 class="display-4">Bem-vindo ao  Projeto!</h1>
-        <p class="lead">Esta é a página inicial do seu app.</p>
+    <div class="jumbotron text-center">
+        <h1 class="display-4">Welcome to the Instituto Voar Website!</h1>
+        <p class="lead">Driving socio-environmental change through structured planning and decision-making.</p>
         <hr class="my-4">
-        <p>Explore as funcionalidades e comece a desenvolver seu projeto.</p>
+        <p>Here, you can manage demands, analyze materialities, align projects with strategic action plans, and much more!
+           Whether you're assigning new stakeholders, monitoring the progress of demands, or tracking sustainability efforts, this platform  
+           is designed to help "Instituto Voar" make impact in the region of Baixio, Bahia.</p>
+        <p class="font-weight-bold">Get started by exploring the key features:</p>
+        <div class="d-flex justify-content-center gap-4 mt-3">  <!-- Added gap for spacing -->
+            <a href="{% url 'demand_list' %}" class="btn btn-primary btn-lg">View Demands</a>
+        </div>
+        <div class="d-flex justify-content-center gap-4 mt-3">  <!-- Added gap for spacing -->
+            <a href="{% url 'cockpit' %}" class="btn btn-success btn-lg">Go to Dashboard</a>
+        </div>
     </div>
 </div>
-{% endblock %}
+{% endblock %}

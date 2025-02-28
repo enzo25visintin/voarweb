@@ -1,10 +1,10 @@
 {% extends 'ivw/base.html' %}
 
-{% block title %}Conclude Funnel{% endblock %}
+{% block title %}Conclude Prioritization{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Conclude Funnel</h2>
+    <h2>Conclude Prioritization</h2>
     <form method="post" action="{% url 'finalize_funnel' %}">
         {% csrf_token %}
         <p>Are you sure you want to record the status changes?</p>

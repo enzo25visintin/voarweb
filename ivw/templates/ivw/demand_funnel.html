@@ -1,13 +1,13 @@
 {% extends 'ivw/base.html' %}
 
-{% block title %}Demand Funnel{% endblock %}
+{% block title %}Demand Prioritization{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Demand Funnel</h2>
+    <h2>Demand Prioritization</h2>
     <form method="get" action=".">
-        <input type="text" name="q" placeholder="Buscar...">
-        <button type="submit" class="btn btn-primary">Buscar</button>
+        <input type="text" name="q" placeholder="Search...">
+        <button type="submit" class="btn btn-primary">Search</button>
     </form>
     <br>
     <form method="post" action="{% url 'conclude_funnel' %}">
@@ -38,9 +38,9 @@
                         <td>{{ demand.potential_beneficiaries }}</td>
                         <td>
                             <select id="status_{{ demand.demand_id }}" name="status_{{ demand.demand_id }}" class="form-control" onchange="updateStatus({{ demand.demand_id }})">
-                                <option value="Aguardando Priorização" {% if demand.status == 'Aguardando Priorização' %} selected {% endif %}>Aguardando Priorização</option>
-                                <option value="Aprovada" {% if demand.status == 'Aprovada' %} selected {% endif %}>Aprovada</option>
-                                <option value="Cancelada" {% if demand.status == 'Cancelada' %} selected {% endif %}>Cancelada</option>
+                                <option value="Awaiting Prioritization" {% if demand.status == 'Awaiting Prioritization' %} selected {% endif %}>Awaiting Prioritization</option>
+                                <option value="Approved" {% if demand.status == 'Approved' %} selected {% endif %}>Approved</option>
+                                <option value="Canceled" {% if demand.status == 'Canceled' %} selected {% endif %}>Canceled</option>
                             </select>
                         </td>
                         <td>

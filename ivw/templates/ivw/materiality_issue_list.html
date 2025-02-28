@@ -1,12 +1,12 @@
 {% extends 'ivw/base.html' %}
 
-{% block title %}Lista de Materiality Issues{% endblock %}
+{% block title %}Materiality Issues List{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
     <h2>Materiality Issues List</h2><form method="get" action=".">
-        <input type="text" name="q" placeholder="Buscar...">
-        <button type="submit" class="btn btn-primary">Buscar</button>
+        <input type="text" name="q" placeholder="Search...">
+        <button type="submit" class="btn btn-primary">Search</button>
     </form>
     
 
@@ -28,7 +28,7 @@
                 <td>{{ issue.criterion }}</td>
                 <td>{{ issue.description }}</td>
                 <td>
-                    <a href="{% url 'materiality_issue_update' issue.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'materiality_issue_update' issue.pk %}" class="btn btn-warning btn-sm">Edit</a>
                 </td>
             </tr>
             {% endfor %}

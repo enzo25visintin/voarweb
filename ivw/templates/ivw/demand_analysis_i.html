@@ -1,10 +1,10 @@
 {% extends 'ivw/base.html' %}
 
-{% block title %} Demand Analysis i {{ Demand.title }} {% endblock %}
+{% block title %} Demand Analysis I - {{ Demand.title }} {% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Análise da Demanda</h2>
+    <h2>Demand Analysis</h2>
     <form method="post">
         {% csrf_token %}
         <div class="form-group mb-3">
@@ -43,7 +43,7 @@
                 {% endfor %}
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Avançar para a próxima etapa</button>
+        <button type="submit" class="btn btn-primary">Proceed to the next step</button>
     </form>
 </div>
 {% endblock %}
