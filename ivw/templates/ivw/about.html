@@ -4,8 +4,67 @@
 {% block title %}About{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h1>About Us</h1>
-    <p>Information about the system and its purpose</p>
+<div class="container mt-5">
+    <div class="card shadow-sm p-4">
+        <h1 class="mb-3" style="font-weight: normal; color: black; font-size: 1.8rem;">About This Project</h1>
+        <p class="text-muted" style="font-size: 0.95rem;">
+            This web application is developed as part of a <strong>Computer Science Internal Assessment (IA)</strong>.
+            It is designed to assist <strong>Instituto Voar</strong>, from <strong>Prima Inova</strong>, in organizing
+            and categorizing stakeholder demands effectively.
+        </p>
+        <p class="text-muted" style="font-size: 0.95rem;">
+            The system allows <strong>Francisleide Pustilnik</strong> and her team to manage demands following the
+            <strong>AA1000 Accountability Standards</strong>, ensuring proper classification, prioritization, and tracking
+            of programs aimed at addressing these demands.
+        </p>
+        <p class="fw-bold" style="font-size: 0.95rem;">Below is the success criteria that the system must fulfill:</p>
+        
+        <!-- Success Criteria Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" style="font-size: 0.9rem;">Category</th>
+                        <th scope="col" style="font-size: 0.9rem;">Success Criteria</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-size: 0.9rem;">Minimum</td>
+                        <td style="font-size: 0.9rem;">
+                            <ul>
+                                <li>Access to the system is limited to my client, her team, and any other user specified by her, using a login system with hashed password storage for security.</li>
+                                <li>Users can register and edit stakeholders, materiality principles outlined by the AA1000 standards, the United Nation’s SDGs, and programs executed by “Instituto Voar” in response to demands.</li>
+                                <li>Users can register and edit new demands, specifying its title and description, while the system automatically stores its date of submission.</li>
+                                <li>Users can categorize demands by associating them with one or more stakeholders, materiality principles, and SDGs.</li>
+                                <li>Users can rate demands on a 1-5 scale for potential impact, implementation efforts, and beneficiaries. The average of these ratings should be automatically stored by the system under the “significance” field.</li>
+                                <li>After creation, demands are automatically classified as “awaiting prioritization,” but users can change the status of a demand as “approved” or “canceled.”</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 0.9rem;">Desirable</td>
+                        <td style="font-size: 0.9rem;">
+                            <ul>
+                                <li>Users can create action plans for implementing each demand listed as “approved,” specifying the action plans’ titles, start and end dates, responsible persons, and estimated costs.</li>
+                                <li>The system allows associating approved demands with response programs executed by “Instituto Voar.”</li>
+                                <li>The system includes a dashboard with the number of demands associated with each materiality issue, SDG, and stakeholder.</li>
+                                <li>The system includes a dashboard illustrating the number of demands under each of the three statuses of “approved,” “canceled,” or “awaiting prioritization.”</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 0.9rem;">If Possible</td>
+                        <td style="font-size: 0.9rem;">
+                            <ul>
+                                <li>The system contains a table that automatically calculates the total estimated cost per program, based on the demands and their action plans it responds to. The table shows both ongoing and planned expenses for each program.</li>
+                                <li>The system enables stakeholders to insert their demands directly to its database, thus avoiding my client and her team from registering demands manually.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-{% endblock %}
+{% endblock %}
